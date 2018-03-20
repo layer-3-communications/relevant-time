@@ -17,7 +17,7 @@ library
   exposed-modules:     Data.RelevantTime
   -- other-modules:       
   other-extensions:    LambdaCase, OverloadedStrings
-  build-depends:       base >=4.10 && <5.0
+  build-depends:       base >=4.7 && <5.0
                      , aeson
                      , chronos
                      , text

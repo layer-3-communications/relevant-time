@@ -1,6 +1,8 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 
+{-# OPTIONS_GHC -Wall #-}
+
 module Data.RelevantTime
   ( RelevantTime(..)
   , encodeRelevantTime

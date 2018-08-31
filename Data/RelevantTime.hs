@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 
@@ -15,6 +16,7 @@ import Data.Aeson (ToJSON(..),FromJSON(..))
 import Data.Int (Int64)
 import Chronos.Types (Time)
 import Torsor (add,invert,scale)
+import GHC.Generics (Generic)
 import qualified Chronos as CH
 import qualified Data.Text as T
 import qualified Data.Text.Read as TR
@@ -27,7 +29,7 @@ data RelevantTime
   | RelevantTimeNow
   | RelevantTimeMidnight
   | RelevantTimeNoon
-  deriving (Eq,Show)
+  deriving (Eq,Ord,Generic,Show)
 
 instance ToJSON RelevantTime where
   toJSON = AE.String . encodeRelevantTime
@@ -59,7 +61,7 @@ decodeRelevantTime t = if T.null t
       _ -> Nothing
 
 absolutizeRelevantTime :: Time -> RelevantTime -> Time
-absolutizeRelevantTime now x = case x of
+absolutizeRelevantTime now = \case
   RelevantTimeNow -> now
   RelevantTimeNoon-> add (scale 12 CH.hour) (CH.dayToTimeMidnight (CH.timeToDayTruncate now))
   RelevantTimeMidnight -> CH.dayToTimeMidnight (CH.timeToDayTruncate now)

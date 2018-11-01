@@ -74,13 +74,19 @@ relativizeAbsoluteTime :: Time -> Time -> RelevantTime
 relativizeAbsoluteTime now abst
   | absolutizeRelevantTime now RelevantTimeNoon == abst = RelevantTimeNoon
   | absolutizeRelevantTime now RelevantTimeMidnight == abst = RelevantTimeMidnight
-  | (abs $ CH.getTimespan (now `difference` abst)) <  (CH.getTimespan CH.minute) = RelevantTimeNow
-  | (abs $ CH.getTimespan (now `difference` abst)) <= (CH.getTimespan CH.minute) * 59 = RelevantTimeMinute $ round $ (toFrac $ CH.getTime abst) / 60000000000
-  | (abs $ CH.getTimespan (now `difference` abst)) <= (CH.getTimespan CH.hour) * 23 = RelevantTimeHour $ round $ (toFrac $ CH.getTime abst) / 3600000000000
-  | otherwise = RelevantTimeDay $ round $ (toFrac $ CH.getTime abst) / 86400000000000
+  | diff <  (CH.getTimespan CH.minute) = RelevantTimeNow
+  | diff <= (CH.getTimespan CH.minute) * 59 = RelevantTimeMinute $ round $ (toFrac diff) / (minute * nanoseconds)
+  | diff <= (CH.getTimespan CH.hour) * 23 = RelevantTimeHour $ round $ (toFrac diff) / (hour * nanoseconds)
+  | otherwise = RelevantTimeDay $ round $ (toFrac diff) / (day * nanoseconds)
   where
-  toFrac :: Int64 -> Double
+  diff :: Int64
+  diff = (abs $ CH.getTimespan (now `difference` abst))
+  toFrac :: Int64 -> Rational
   toFrac = fromIntegral . abs
+  minute = 60
+  hour = 60 * minute
+  day = 24 * hour
+  nanoseconds = 1000000000
 
 readInt :: Text -> Maybe Int64
 readInt x = case TR.signed TR.decimal x of

@@ -1,8 +1,8 @@
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# language DeriveGeneric #-}
+{-# language LambdaCase #-}
+{-# language OverloadedStrings #-}
 
-{-# OPTIONS_GHC -Wall #-}
+{-# options_ghc -Wall #-}
 
 module Data.RelevantTime
   ( RelevantTime(..)
@@ -59,6 +59,8 @@ decodeRelevantTime t = if T.null t
       'm' -> RelevantTimeMinute <$> readInt (T.init t)
       'h' -> RelevantTimeHour <$> readInt (T.init t)
       'd' -> RelevantTimeDay <$> readInt (T.init t)
+      'w' -> RelevantTimeDay <$> (fmap ((*) 7 ) $ readInt (T.init t))
+      'M' -> RelevantTimeDay <$> (fmap ((*) 30) $ readInt (T.init t))
       _ -> Nothing
 
 absolutizeRelevantTime :: Time -> RelevantTime -> Time
